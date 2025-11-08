@@ -17,7 +17,10 @@ Perfect for RPGs, NPCs, characters, and random name creation in web projects.
 ---
 
 ## ⚙️ Usage
-1. Include the script in your project.  
+1. Include the script in your project.
+   ```html
+   <script type="text/javascript" src="tools/random_name_generator.js"></script>
+   
 2. Add an input field and button:
    ```html
    <input id="character_name" type="text" />
