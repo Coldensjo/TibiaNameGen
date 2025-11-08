@@ -488,20 +488,6 @@ function shortenName(name, maxLen) {
 	if (!out) out = name.slice(0, maxLen);
 	return out.replace(/[\s'-]+$/, '');
 }
-function removeTrailingConnector(name) {
-	name = normalizeSpaces(name);
-	if (!name) return name;
-	const nameLower = name.toLowerCase();
-	for (const connector of connectors) {
-		const connectorLower = connector.toLowerCase();
-		const pattern = new RegExp('\\s+' + connectorLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*$', 'i');
-		if (pattern.test(name)) {
-			name = name.replace(pattern, '');
-			break;
-		}
-	}
-	return normalizeSpaces(name);
-}
 function combineWordHalves(word1, word2) {
 	var half1 = Math.floor(word1.length / 2);
 	var half2 = Math.floor(word2.length / 2);
@@ -510,6 +496,21 @@ function combineWordHalves(word1, word2) {
 	var part1 = useFirstHalf1 ? word1.substring(0, half1) : word1.substring(half1);
 	var part2 = useFirstHalf2 ? word2.substring(0, half2) : word2.substring(half2);
 	return (Math.random() < 0.5) ? (part1 + part2) : (part2 + part1);
+}
+
+// --- connector regex setup (fix trailing connectors) ----------------
+const connectorsList = uniq(connectors.map(s => s.toLowerCase())).sort((a, b) => b.length - a.length);
+function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+const connectorPattern = new RegExp(`\\b(?:${connectorsList.map(escRe).join('|')})\\b\\s*$`, 'i');
+
+// Removes trailing connectors like "Alex from the"
+function removeTrailingConnector(name) {
+	let out = normalizeSpaces(String(name || ''));
+	if (!out) return out;
+	while (connectorPattern.test(out)) {
+		out = out.replace(connectorPattern, '').trim();
+	}
+	return out;
 }
 
 // --- validation -----------------------------------------------------
@@ -521,6 +522,9 @@ function isValidName(name) {
 	const lower = name.toLowerCase();
 	for (const p of blockedPrefixes) if (lower.indexOf(p) === 0) return false;
 	for (const w of blockedWords) if (lower.indexOf(w) !== -1) return false;
+
+	// Reject names ending with connectors
+	if (connectorPattern.test(lower)) return false;
 
 	if (name.indexOf('  ') !== -1) return false;
 	const last = name.charAt(name.length - 1);
@@ -559,7 +563,7 @@ function generateRandomName() {
 			else if (singleChoice < 0.75) name = capWordsPreserve(singleName);
 			else name = capWordLower(monster);
 
-			// 20% two words
+		// 20% two words
 		} else if (pattern < 0.32) {
 			var twoWordChoice = Math.random();
 			if (twoWordChoice < 0.33) {
@@ -572,13 +576,13 @@ function generateRandomName() {
 				name = namePart + ' ' + capWordLower(monster);
 			}
 
-			// 8% combined halves
+		// 8% combined halves
 		} else if (pattern < 0.40) {
 			var word1 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
 			var word2 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
 			name = capWordLower(combineWordHalves(word1, word2).replace(/[^a-z'-]/g, ''));
 
-			// 12% prefix + name
+		// 12% prefix + name
 		} else if (pattern < 0.52) {
 			var nameChoice = Math.random();
 			if (nameChoice < 0.25) name = prefix + ' ' + capWordsPreserve(firstName);
@@ -586,7 +590,7 @@ function generateRandomName() {
 			else if (nameChoice < 0.75) name = prefix + ' ' + capWordLower(animal);
 			else name = prefix + ' ' + capWordLower(monster);
 
-			// 15% name + connector + something
+		// 15% name + connector + something
 		} else if (pattern < 0.67) {
 			var namePartA = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
 			var pickA = Math.random();
@@ -596,7 +600,7 @@ function generateRandomName() {
 						: capWordsPreserve(lastName);
 			name = namePartA + ' ' + connector + ' ' + secondPartA;
 
-			// 15% prefix + name + connector + something
+		// 15% prefix + name + connector + something
 		} else if (pattern < 0.82) {
 			var namePartB = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
 			var pickB = Math.random();
@@ -606,7 +610,7 @@ function generateRandomName() {
 						: capWordsPreserve(lastName);
 			name = prefix + ' ' + namePartB + ' ' + connector + ' ' + secondPartB;
 
-			// 10% name + connector + descriptor (no prefix)
+		// 10% name + connector + descriptor (no prefix)
 		} else if (pattern < 0.92) {
 			var namePartC = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
 			var pickC = Math.random();
@@ -615,7 +619,7 @@ function generateRandomName() {
 					: capWordLower(monster);
 			name = namePartC + ' ' + connector + ' ' + secondPartC;
 
-			// 8% fancy combos
+		// 8% fancy combos
 		} else {
 			if (Math.random() < 0.5) {
 				name = prefix + ' ' + capWordsPreserve(firstName) + ' ' + capWordsPreserve(lastName);
@@ -624,8 +628,11 @@ function generateRandomName() {
 			}
 		}
 
+		// Post-process name
 		name = shortenName(normalizeSpaces(name), 21);
 		name = removeTrailingConnector(name);
+
+		// Check if name is valid
 		if (isValidName(name)) {
 			var $input = (window.jQuery ? jQuery('#character_name') : null);
 			if ($input && $input.length) $input.val(name);
@@ -640,7 +647,7 @@ function generateRandomName() {
 		attempts++;
 	}
 
-	// Fallback
+	// Fallback if no valid name found
 	var simpleName;
 	if (Math.random() < 0.5) {
 		simpleName = capWordsPreserve(pick(singleNames));
