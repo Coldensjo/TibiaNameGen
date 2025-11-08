@@ -488,6 +488,20 @@ function shortenName(name, maxLen) {
 	if (!out) out = name.slice(0, maxLen);
 	return out.replace(/[\s'-]+$/, '');
 }
+function removeTrailingConnector(name) {
+	name = normalizeSpaces(name);
+	if (!name) return name;
+	const nameLower = name.toLowerCase();
+	for (const connector of connectors) {
+		const connectorLower = connector.toLowerCase();
+		const pattern = new RegExp('\\s+' + connectorLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*$', 'i');
+		if (pattern.test(name)) {
+			name = name.replace(pattern, '');
+			break;
+		}
+	}
+	return normalizeSpaces(name);
+}
 function combineWordHalves(word1, word2) {
 	var half1 = Math.floor(word1.length / 2);
 	var half2 = Math.floor(word2.length / 2);
@@ -611,6 +625,7 @@ function generateRandomName() {
 		}
 
 		name = shortenName(normalizeSpaces(name), 21);
+		name = removeTrailingConnector(name);
 		if (isValidName(name)) {
 			var $input = (window.jQuery ? jQuery('#character_name') : null);
 			if ($input && $input.length) $input.val(name);
@@ -633,6 +648,7 @@ function generateRandomName() {
 		simpleName = capWordLower(pick(adjectives)) + ' ' + capWordLower(pick(animals));
 	}
 	simpleName = shortenName(simpleName, 21);
+	simpleName = removeTrailingConnector(simpleName);
 	if (simpleName.length < 3) simpleName = 'Brave';
 
 	var $input2 = (window.jQuery ? jQuery('#character_name') : null);
