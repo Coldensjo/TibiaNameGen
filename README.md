@@ -3,6 +3,8 @@
 A lightweight JavaScript-based **fantasy name generator** that builds immersive names using adjectives, animals, monsters, prefixes, and connectors.  
 Perfect for RPGs, NPCs, characters, and random name creation in web projects.
 
+![Demo](https://i.imgur.com/OfDnoJR.gif)
+
 ---
 
 ## ✨ Features
@@ -20,3 +22,4 @@ Perfect for RPGs, NPCs, characters, and random name creation in web projects.
    ```html
    <input id="character_name" type="text" />
    <button id="generate_random_name">Generate Name</button>
+
