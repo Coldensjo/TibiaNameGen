@@ -24,5 +24,5 @@ Perfect for RPGs, NPCs, characters, and random name creation in web projects.
 2. Add an input field and button:
    ```html
    <input id="character_name" type="text" />
-   <button id="generate_random_name">Generate Name</button>
+   <button type="button" id="generate_random_name" style="margin-left: 10px; padding: 2px 8px; cursor: pointer;">Suggest name</button>
 
