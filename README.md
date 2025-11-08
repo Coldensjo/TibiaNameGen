@@ -3,7 +3,8 @@
 A lightweight JavaScript-based **fantasy name generator** that builds immersive names using adjectives, animals, monsters, prefixes, and connectors.  
 Perfect for RPGs, NPCs, characters, and random name creation in web projects.
 
-![Demo](https://i.imgur.com/OfDnoJR.gif)
+**Demo**
+https://coldensjo.github.io/TibiaNameGen/
 
 ---
 
