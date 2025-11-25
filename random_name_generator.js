@@ -1,10 +1,15 @@
 // HTML code:
 // <script type="text/javascript" src="tools/random_name_generator.js"></script>
-// <button type="button" id="generate_random_name" style="margin-left: 10px; padding: 2px 8px; cursor: pointer;">Suggest name</button>
+// <button type="button" id="generate_random_name" data-max-length="15" style="margin-left: 10px; padding: 2px 8px; cursor: pointer;">Suggest name</button>
 
 // Random Name Generator by Siz
 
-var adjectives = [
+// --- de-dupe helper --------------------------------------------------------
+function uniq(a) {
+	return Array.from(new Set(a.map(s => String(s).trim())));
+}
+
+const adjectives = uniq([
 	"abandoned", "able", "absolute", "academic", "acceptable", "acclaimed", "accomplished", "accurate",
 	"aching", "acidic", "acrobatic", "active", "actual", "adept", "admirable", "admired",
 	"adolescent", "adorable", "adored", "advanced", "adventurous", "affectionate", "afraid", "aged",
@@ -165,7 +170,7 @@ var adjectives = [
 	"vivacious", "vivid", "voluminous", "wan", "warlike", "warm", "warmhearted", "warped",
 	"wary", "wasteful", "watchful", "waterlogged", "watery", "wavy", "weak", "wealthy",
 	"weary", "webbed", "wee", "weekly", "weepy", "weighty", "weird", "welcome",
-	"well-documented", "well-groomed", "well-informed", "well-lit", "well-made", "well-off", "well-to-do", "well-worn",
+	"well-documented", "well-groomed", "well-informed", "well-lit", "well-made", "well-off", "well-worn",
 	"wet", "which", "whimsical", "whirlwind", "whispered", "white", "whole", "whopping",
 	"wicked", "wide", "wide-eyed", "wiggly", "wild", "willing", "wilted", "winding",
 	"windy", "winged", "wiry", "wise", "witty", "wobbly", "woeful", "wonderful",
@@ -173,9 +178,9 @@ var adjectives = [
 	"worst", "worthless", "worthwhile", "worthy", "wrathful", "wretched", "writhing", "wrong",
 	"wry", "yawning", "yearly", "yellow", "yellowish", "young", "youthful", "yummy",
 	"zany", "zealous", "zesty", "zigzag"
-];
+]);
 
-var animals = [
+const animals = uniq([
 	"aardvark", "albatross", "alligator", "alpaca", "ant", "anteater", "antelope", "ape", "armadillo",
 	"axolotl", "baboon", "badger", "barracuda", "bat", "bear", "beaver", "bee", "binturong", "bison",
 	"boar", "buffalo", "butterfly", "camel", "capuchin", "capybara", "caribou", "cassowary", "cat",
@@ -204,10 +209,10 @@ var animals = [
 	"uakari", "viper", "vicuna", "vulture", "wallaby", "walrus", "wasp", "weasel", "whale", "wildcat",
 	"wolf", "wolverine", "wombat", "woodcock", "woodpecker", "worm", "wren", "xerus", "yak", "zebra",
 	"zebu"
-];
+]);
 
 // Monsternames from Tibia
-var monsters = [
+const monsters = uniq([
 	"amazon", "ancient", "scarab", "apocalypse", "ashmunrah", "assassin", "badger", "bandit", "banshee",
 	"bat", "bazir", "bear", "behemoth", "beholder", "sheep", "blue", "djinn",
 	"bonebeast", "bug", "butterfly", "carniphila", "cave", "rat", "centipede", "chicken", "cobra",
@@ -228,10 +233,10 @@ var monsters = [
 	"troll", "tarantula", "terror", "bird", "thalas", "evil", "eye", "halloween", "hare",
 	"horned", "fox", "old", "widow", "tiger", "troll", "valkyrie", "vampire", "vashresamun",
 	"war", "wolf", "warlock", "wasp", "wild", "witch", "winter", "yeti"
-];
+]);
 
 // Original fantasy name lists
-var firstNameParts = [
+const firstNameParts = uniq([
 	'Aeden', 'Aegis', 'Aelric', 'Aelwyn', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron',
 	'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron',
 	'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron', 'Aeron',
@@ -304,9 +309,9 @@ var firstNameParts = [
 	'Ursula', 'Uso', 'Ustan', 'Uzgod', 'Uzon', 'Velvet', 'Vera', 'Vladruc', 'Wally', 'Walter',
 	'Warbert', 'Willard', 'William', 'Willie', 'Wyat', 'Wyda', 'Xed', 'Xodet', 'Yaman', 'Yanni',
 	'Yberius', 'Yoem', 'Yulas', 'Zoltan'
-];
+]);
 
-var lastNameParts = [
+const lastNameParts = uniq([
 	'Account', 'Adamant', 'Agate', 'Alchemist', 'Amber', 'Amulet', 'Ancient', 'Annals', 'Apex',
 	'Aqua', 'Archer', 'Armor', 'Arrow', 'Ash', 'Astute', 'Atoll', 'Avenue', 'Axe', 'Bank',
 	'Banner', 'Barony', 'Barracks', 'Bastion', 'Bay', 'Bear', 'Beach', 'Beautiful', 'Bee',
@@ -359,10 +364,10 @@ var lastNameParts = [
 	'Virtue', 'Voll', 'Voyage', 'Warden', 'Warlock', 'Warrior', 'Watchman', 'Wave', 'West',
 	'Whirlpool', 'White', 'Wild', 'Wind', 'Wise', 'Wizard', 'Wolf', 'Wood', 'Wraith',
 	'Wrathful', 'Wren', 'Zephyr'
-];
+]);
 
 // Includes names from NPCs from Tibia
-var singleNames = [
+const singleNames = uniq([
 	'Aldric', 'Aric', 'Baldric', 'Cedric', 'Darian', 'Eldric', 'Falric', 'Garric', 'Haldric', 'Iric',
 	'Jaric', 'Kaldric', 'Loric', 'Maldric', 'Noric', 'Oric', 'Paldric', 'Quaric', 'Roric', 'Saldric',
 	'Taric', 'Uldric', 'Varic', 'Waldric', 'Xaric', 'Yoric', 'Zaldric', 'Aeris', 'Bren', 'Cael',
@@ -404,10 +409,10 @@ var singleNames = [
 	'Zara', 'Alys', 'Briar', 'Celeste', 'Dawn', 'Elara', 'Faye', 'Gwen', 'Hazel', 'Iris',
 	'Jasmine', 'Kira', 'Lily', 'Maeve', 'Niamh', 'Opal', 'Pearl', 'Quinn', 'Rose', 'Sage',
 	'Tessa', 'Una', 'Violet', 'Willow', 'Xara', 'Yara', 'Zoe'
-];
+]);
 
 // Prefixes for names
-var prefixes = [
+const prefixes = uniq([
 	"Acolyte", "Admiral", "Alchemist", "Ambassador", "Ancient", "Apothecary", "Apprentice",
 	"Architect", "Archduchess", "Archduke", "Archmage", "Archpriest", "Archer", "Armorer", "Artificer",
 	"Artisan", "Artist", "Assassin", "Bard", "Baron", "Baroness", "Beastmaster", "Blacksmith", "Builder",
@@ -428,33 +433,23 @@ var prefixes = [
 	"Steward", "Supreme", "Tailor", "Tanner", "Teacher", "Thief", "Tracker", "Trader", "Trailblazer",
 	"Trapper", "Troubadour", "Venerable", "Vendor", "Vintner", "Viscount", "Viscountess", "Warden",
 	"Warlord", "Warlock", "Warrior", "Watchman", "Weaver", "Weaponsmith", "Wise"
-];
+]);
 
 // Connecting words for names (like "the", "of", etc.)
-var connectors = [
-	'the', 'of', 'of the', 'from the', 'from', 'in', 'on', 'at', 'by', 'with'
-];
+const connectors = uniq([
+	'the', 'of'
+]);
 
-// --- de-dupe --------------------------------------------------------
-function uniq(a) {
-	return Array.from(new Set(a.map(s => String(s).trim())));
-}
-adjectives = uniq(adjectives);
-animals = uniq(animals);
-monsters = uniq(monsters);
-firstNameParts = uniq(firstNameParts);
-lastNameParts = uniq(lastNameParts);
-singleNames = uniq(singleNames);
-prefixes = uniq(prefixes);
-connectors = uniq(connectors);
+const DEFAULT_MAX = 15;
+const DEBUG = false;
 
 // --- blocked --------------------------------------------------------
-var blockedWords = ['admin', 'administrator', 'gm', 'cm', 'god', 'tutor', 'fuck', 'sux', 'suck', 'noob', 'nigger', 'nig'];
-var blockedPrefixes = ['admin ', 'administrator ', 'gm ', 'cm ', 'god ', 'tutor '];
+const blockedWords = ['admin', 'administrator', 'gm', 'cm', 'god', 'tutor', 'fuck', 'sux', 'suck', 'noob', 'nigger', 'nig'];
+const blockedPrefixes = ['admin ', 'administrator ', 'gm ', 'cm ', 'god ', 'tutor '];
 
 // --- guards ---------------------------------------------------------
-if (typeof $ === 'undefined' && typeof jQuery === 'undefined') {
-	console.error('jQuery not found – using DOM fallback for name button');
+if (typeof $ === 'undefined' && typeof jQuery === 'undefined' && DEBUG) {
+	console.warn('jQuery not found – using DOM fallback for name button');
 }
 if (typeof checkName !== 'function') {
 	window.checkName = function () { };
@@ -479,22 +474,41 @@ function capWordLower(str) {
 function normalizeSpaces(s) {
 	return String(s).replace(/\s+/g, ' ').trim();
 }
+// Helper function to absolutely guarantee a name is within maxLen
+function enforceMaxLength(name, maxLen) {
+	if (!name) return '';
+	if (!maxLen || maxLen <= 0) return String(name || '');
+	name = String(name);
+	if (name.length <= maxLen) return name;
+	// Hard truncate if over limit
+	return name.substring(0, maxLen).trim();
+}
+
 function shortenName(name, maxLen) {
 	name = normalizeSpaces(name);
-	if (name.length <= maxLen) return name;
+	if (!name || name.length <= maxLen) return name;
 	const parts = name.split(' ');
-	while (parts.length > 1 && parts.join(' ').length > maxLen) parts.pop();
+	// Remove words from the end until we're at or under the limit
+	while (parts.length > 1 && parts.join(' ').length > maxLen) {
+		parts.pop();
+	}
 	let out = parts.join(' ');
-	if (!out) out = name.slice(0, maxLen);
-	return out.replace(/[\s'-]+$/, '');
+	// If still too long (single long word or remaining words), truncate
+	if (out.length > maxLen) {
+		out = out.slice(0, maxLen).trim();
+	}
+	// Clean up trailing punctuation/spaces (but don't let it exceed maxLen)
+	out = out.replace(/[\s'-]+$/, '');
+	// CRITICAL: Use enforceMaxLength to guarantee we're within maxLen
+	return enforceMaxLength(out, maxLen);
 }
 function combineWordHalves(word1, word2) {
-	var half1 = Math.floor(word1.length / 2);
-	var half2 = Math.floor(word2.length / 2);
-	var useFirstHalf1 = Math.random() < 0.5;
-	var useFirstHalf2 = Math.random() < 0.5;
-	var part1 = useFirstHalf1 ? word1.substring(0, half1) : word1.substring(half1);
-	var part2 = useFirstHalf2 ? word2.substring(0, half2) : word2.substring(half2);
+	const half1 = Math.floor(word1.length / 2);
+	const half2 = Math.floor(word2.length / 2);
+	const useFirstHalf1 = Math.random() < 0.5;
+	const useFirstHalf2 = Math.random() < 0.5;
+	const part1 = useFirstHalf1 ? word1.substring(0, half1) : word1.substring(half1);
+	const part2 = useFirstHalf2 ? word2.substring(0, half2) : word2.substring(half2);
 	return (Math.random() < 0.5) ? (part1 + part2) : (part2 + part1);
 }
 
@@ -514,10 +528,10 @@ function removeTrailingConnector(name) {
 }
 
 // --- validation -----------------------------------------------------
-function isValidName(name) {
+function isValidName(name, maxLength = DEFAULT_MAX) {
 	if (!name) return false;
 	name = normalizeSpaces(name);
-	if (name.length < 3 || name.length > 21) return false;
+	if (name.length < 3 || name.length > maxLength) return false;
 
 	const lower = name.toLowerCase();
 	for (const p of blockedPrefixes) if (lower.indexOf(p) === 0) return false;
@@ -538,143 +552,212 @@ function isValidName(name) {
 	return true;
 }
 
-// --- generator ------------------------------------------------------
-function generateRandomName() {
-	var name = '';
-	var attempts = 0;
-	var maxAttempts = 40;
+// --- generator helpers ------------------------------------------------------
+function resolveMaxLength(maxLength) {
+	const parsed = parseInt(maxLength, 10);
+	if (!Number.isNaN(parsed) && parsed > 0) return parsed;
 
-	while (attempts < maxAttempts) {
-		var adjective = pick(adjectives);
-		var animal = pick(animals);
-		var firstName = pick(firstNameParts);
-		var lastName = pick(lastNameParts);
-		var singleName = pick(singleNames);
-		var prefix = pick(prefixes);
-		var connector = pick(connectors);
-		var monster = pick(monsters);
-		var pattern = Math.random();
-
-		// 12% single word
-		if (pattern < 0.12) {
-			var singleChoice = Math.random();
-			if (singleChoice < 0.25) name = capWordLower(adjective);
-			else if (singleChoice < 0.50) name = capWordLower(animal);
-			else if (singleChoice < 0.75) name = capWordsPreserve(singleName);
-			else name = capWordLower(monster);
-
-		// 20% two words
-		} else if (pattern < 0.32) {
-			var twoWordChoice = Math.random();
-			if (twoWordChoice < 0.33) {
-				var secondPart = Math.random() < 0.5 ? capWordLower(animal) : capWordLower(monster);
-				name = capWordLower(adjective) + ' ' + secondPart;
-			} else if (twoWordChoice < 0.66) {
-				name = capWordsPreserve(firstName) + ' ' + capWordsPreserve(lastName);
-			} else {
-				var namePart = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
-				name = namePart + ' ' + capWordLower(monster);
-			}
-
-		// 8% combined halves
-		} else if (pattern < 0.40) {
-			var word1 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
-			var word2 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
-			name = capWordLower(combineWordHalves(word1, word2).replace(/[^a-z'-]/g, ''));
-
-		// 12% prefix + name
-		} else if (pattern < 0.52) {
-			var nameChoice = Math.random();
-			if (nameChoice < 0.25) name = prefix + ' ' + capWordsPreserve(firstName);
-			else if (nameChoice < 0.50) name = prefix + ' ' + capWordsPreserve(singleName);
-			else if (nameChoice < 0.75) name = prefix + ' ' + capWordLower(animal);
-			else name = prefix + ' ' + capWordLower(monster);
-
-		// 15% name + connector + something
-		} else if (pattern < 0.67) {
-			var namePartA = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
-			var pickA = Math.random();
-			var secondPartA = (pickA < 0.25) ? capWordLower(adjective)
-				: (pickA < 0.50) ? capWordLower(animal)
-					: (pickA < 0.75) ? capWordLower(monster)
-						: capWordsPreserve(lastName);
-			name = namePartA + ' ' + connector + ' ' + secondPartA;
-
-		// 15% prefix + name + connector + something
-		} else if (pattern < 0.82) {
-			var namePartB = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
-			var pickB = Math.random();
-			var secondPartB = (pickB < 0.25) ? capWordLower(adjective)
-				: (pickB < 0.50) ? capWordLower(animal)
-					: (pickB < 0.75) ? capWordLower(monster)
-						: capWordsPreserve(lastName);
-			name = prefix + ' ' + namePartB + ' ' + connector + ' ' + secondPartB;
-
-		// 10% name + connector + descriptor (no prefix)
-		} else if (pattern < 0.92) {
-			var namePartC = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
-			var pickC = Math.random();
-			var secondPartC = (pickC < 0.33) ? capWordLower(adjective)
-				: (pickC < 0.66) ? capWordLower(animal)
-					: capWordLower(monster);
-			name = namePartC + ' ' + connector + ' ' + secondPartC;
-
-		// 8% fancy combos
-		} else {
-			if (Math.random() < 0.5) {
-				name = prefix + ' ' + capWordsPreserve(firstName) + ' ' + capWordsPreserve(lastName);
-			} else {
-				name = capWordsPreserve(firstName) + ' ' + connector + ' ' + capWordsPreserve(lastName);
-			}
+	let dataMaxLength;
+	if (window.jQuery) {
+		const $btn = jQuery('#generate_random_name');
+		if ($btn && $btn.length) {
+			dataMaxLength = $btn.data('max-length');
 		}
-
-		// Post-process name
-		name = shortenName(normalizeSpaces(name), 21);
-		name = removeTrailingConnector(name);
-
-		// Check if name is valid
-		if (isValidName(name)) {
-			var $input = (window.jQuery ? jQuery('#character_name') : null);
-			if ($input && $input.length) $input.val(name);
-			else {
-				var el = document.getElementById('character_name');
-				if (el) el.value = name;
-				else console.warn('#character_name not found, generated:', name);
-			}
-			checkName();
-			return;
-		}
-		attempts++;
-	}
-
-	// Fallback if no valid name found
-	var simpleName;
-	if (Math.random() < 0.5) {
-		simpleName = capWordsPreserve(pick(singleNames));
 	} else {
-		simpleName = capWordLower(pick(adjectives)) + ' ' + capWordLower(pick(animals));
+		const btn = document.getElementById('generate_random_name');
+		if (btn) dataMaxLength = btn.getAttribute('data-max-length');
 	}
-	simpleName = shortenName(simpleName, 21);
-	simpleName = removeTrailingConnector(simpleName);
-	if (simpleName.length < 3) simpleName = 'Brave';
 
-	var $input2 = (window.jQuery ? jQuery('#character_name') : null);
-	if ($input2 && $input2.length) $input2.val(simpleName);
-	else {
-		var el2 = document.getElementById('character_name');
-		if (el2) el2.value = simpleName;
+	const dataParsed = parseInt(dataMaxLength, 10);
+	if (!Number.isNaN(dataParsed) && dataParsed > 0) return dataParsed;
+	return DEFAULT_MAX;
+}
+
+function buildRandomName() {
+	const adjective = pick(adjectives);
+	const animal = pick(animals);
+	const firstName = pick(firstNameParts);
+	const lastName = pick(lastNameParts);
+	const singleName = pick(singleNames);
+	const prefix = pick(prefixes);
+	const connector = pick(connectors);
+	const monster = pick(monsters);
+	const pattern = Math.random();
+	let name = '';
+
+	if (pattern < 0.12) {
+		const singleChoice = Math.random();
+		if (singleChoice < 0.25) name = capWordLower(adjective);
+		else if (singleChoice < 0.50) name = capWordLower(animal);
+		else if (singleChoice < 0.75) name = capWordsPreserve(singleName);
+		else name = capWordLower(monster);
+	} else if (pattern < 0.32) {
+		const twoWordChoice = Math.random();
+		if (twoWordChoice < 0.33) {
+			const secondPart = Math.random() < 0.5 ? capWordLower(animal) : capWordLower(monster);
+			name = `${capWordLower(adjective)} ${secondPart}`;
+		} else if (twoWordChoice < 0.66) {
+			name = `${capWordsPreserve(firstName)} ${capWordsPreserve(lastName)}`;
+		} else {
+			const namePart = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
+			name = `${namePart} ${capWordLower(monster)}`;
+		}
+	} else if (pattern < 0.40) {
+		const word1 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
+		const word2 = (Math.random() < 0.5 ? adjective : (Math.random() < 0.5 ? animal : monster)).toLowerCase();
+		name = capWordLower(combineWordHalves(word1, word2).replace(/[^a-z'-]/g, ''));
+	} else if (pattern < 0.52) {
+		const nameChoice = Math.random();
+		if (nameChoice < 0.25) name = `${prefix} ${capWordsPreserve(firstName)}`;
+		else if (nameChoice < 0.50) name = `${prefix} ${capWordsPreserve(singleName)}`;
+		else if (nameChoice < 0.75) name = `${prefix} ${capWordLower(animal)}`;
+		else name = `${prefix} ${capWordLower(monster)}`;
+	} else if (pattern < 0.67) {
+		const namePartA = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
+		const pickA = Math.random();
+		const secondPartA = (pickA < 0.25) ? capWordLower(adjective)
+			: (pickA < 0.50) ? capWordLower(animal)
+				: (pickA < 0.75) ? capWordLower(monster)
+					: capWordsPreserve(lastName);
+		name = `${namePartA} ${connector} ${secondPartA}`;
+	} else if (pattern < 0.82) {
+		const namePartB = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
+		const pickB = Math.random();
+		const secondPartB = (pickB < 0.25) ? capWordLower(adjective)
+			: (pickB < 0.50) ? capWordLower(animal)
+				: (pickB < 0.75) ? capWordLower(monster)
+					: capWordsPreserve(lastName);
+		name = `${prefix} ${namePartB} ${connector} ${secondPartB}`;
+	} else if (pattern < 0.92) {
+		const namePartC = Math.random() < 0.5 ? capWordsPreserve(firstName) : capWordsPreserve(singleName);
+		const pickC = Math.random();
+		const secondPartC = (pickC < 0.33) ? capWordLower(adjective)
+			: (pickC < 0.66) ? capWordLower(animal)
+				: capWordLower(monster);
+		name = `${namePartC} ${connector} ${secondPartC}`;
+	} else if (Math.random() < 0.5) {
+		name = `${prefix} ${capWordsPreserve(firstName)} ${capWordsPreserve(lastName)}`;
+	} else {
+		name = `${capWordsPreserve(firstName)} ${connector} ${capWordsPreserve(lastName)}`;
 	}
-	checkName();
+
+	return name;
+}
+
+function postProcessName(name, maxLength = DEFAULT_MAX) {
+	const limit = (Number(maxLength) > 0) ? Number(maxLength) : DEFAULT_MAX;
+	let processed = normalizeSpaces(name || '');
+	processed = shortenName(processed, limit);
+	processed = removeTrailingConnector(processed);
+	return enforceMaxLength(processed, limit);
+}
+
+function setNameField(name) {
+	const value = String(name || '');
+	let handled = false;
+
+	if (window.jQuery) {
+		const $input = jQuery('#character_name');
+		if ($input && $input.length) {
+			$input.val(value);
+			handled = true;
+		}
+	}
+
+	if (!handled) {
+		const input = document.getElementById('character_name');
+		if (input) {
+			input.value = value;
+			handled = true;
+		}
+	}
+
+	if (!handled && DEBUG) {
+		console.warn('#character_name not found; generated name:', value);
+	}
+}
+
+function buildFallbackName(maxLength = DEFAULT_MAX) {
+	const baseName = Math.random() < 0.5
+		? capWordsPreserve(pick(singleNames))
+		: `${capWordLower(pick(adjectives))} ${capWordLower(pick(animals))}`;
+	let fallback = postProcessName(baseName, maxLength);
+	if (fallback.length < 3) fallback = 'Brave';
+	return fallback;
+}
+
+// --- generator ------------------------------------------------------
+function generateRandomName(maxLength) {
+	try {
+		const resolvedMaxLength = resolveMaxLength(maxLength);
+		const maxAttempts = 40;
+		let attempts = 0;
+
+		while (attempts < maxAttempts) {
+			const candidate = postProcessName(buildRandomName(), resolvedMaxLength);
+			if (isValidName(candidate, resolvedMaxLength)) {
+				setNameField(candidate);
+				checkName();
+				return candidate;
+			}
+			attempts++;
+		}
+
+		const fallbackName = buildFallbackName(resolvedMaxLength);
+		setNameField(fallbackName);
+		checkName();
+		return fallbackName;
+	} catch (error) {
+		console.error('Error in generateRandomName:', error);
+		setNameField('Brave');
+		checkName();
+		return 'Brave';
+	}
 }
 
 // --- bind -----------------------------------------------------------
 (function bindGenerator() {
-	if (window.jQuery) {
-		jQuery(function () { jQuery('#generate_random_name').on('click', generateRandomName); });
-	} else {
-		document.addEventListener('DOMContentLoaded', function () {
-			var btn = document.getElementById('generate_random_name');
-			if (btn) btn.addEventListener('click', generateRandomName);
-		});
+	const clickNamespace = '.randomNameGenerator';
+	let domBoundButton = null;
+
+	function handleClick(event) {
+		event.preventDefault();
+		generateRandomName();
 	}
+
+	function bindWithJquery() {
+		if (!window.jQuery) return false;
+		const $btn = jQuery('#generate_random_name');
+		if (!$btn || !$btn.length) return false;
+		$btn.off(`click${clickNamespace}`).on(`click${clickNamespace}`, handleClick);
+		return true;
+	}
+
+	function bindWithDom() {
+		const btn = document.getElementById('generate_random_name');
+		if (!btn) return false;
+		if (domBoundButton === btn) return true;
+		if (domBoundButton) {
+			domBoundButton.removeEventListener('click', handleClick);
+		}
+		btn.addEventListener('click', handleClick);
+		domBoundButton = btn;
+		return true;
+	}
+
+	function bindButton() {
+		if (bindWithJquery()) return;
+		if (bindWithDom()) return;
+		if (DEBUG) console.warn('Button #generate_random_name not found');
+	}
+
+	if (document.readyState === 'complete' || document.readyState === 'interactive') {
+		bindButton();
+	} else if (window.jQuery) {
+		jQuery(bindButton);
+	} else {
+		document.addEventListener('DOMContentLoaded', bindButton);
+	}
+
+	setTimeout(bindButton, 100);
 })();
