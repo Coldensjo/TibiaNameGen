@@ -1,16 +1,9 @@
-# Tibia Name Generator
-
-A JavaScript-based **name generator** that builds names using adjectives, animals, monsters, prefixes, and connectors.  
-
-**Demo**
-https://coldensjo.github.io/TibiaNameGen/
-
----
-
 ## Usage
 1. Include the script in your project.
    ```html
    <script type="text/javascript" src="tools/random_name_generator.js"></script>
+   //or (technically unsafe)
+   <script src="https://cdn.jsdelivr.net/gh/Coldensjo/TibiaNameGen/random_name_generator.js"></script>
    
 2. Add an input field and button:
    ```html
